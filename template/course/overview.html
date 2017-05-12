@@ -1,0 +1,41 @@
+{% extends "enrolled-course.html" %}
+
+{% block title %}Course Overview{% endblock %}
+
+{% block main %}
+<div class="col-xs-8 col-md-9">
+	<div class="form-group">
+		<label>Course Name:</label>
+		{{ course.name }}
+	</div>
+	<div class="form-group">
+		<label>Instructor:</label>
+		{{ course.instructor.name }}
+	</div>
+	<div class="form-group">
+		<div>
+			<label>Description:</label>
+		</div>
+		<div>
+			{{ course.description }}
+		</div>
+	</div>
+	<div class="form-group text-right">
+		{% if course.action == "drop" %}
+		<a href="./drop" class="btn btn-danger">Drop</a>
+		{% elif course.action == "retake" %}
+		 <a href="./enroll" class="btn btn-success">Retake</a>
+		{% elif course.action != "enrolled" %}
+		<a href="./enroll" class="btn btn-success">Enroll</a>
+		{% endif %}
+	</div>
+</div>
+<div class="col-xs-4 col-md-3 text-right">
+	<div class="form-group">
+		<a href="/" class="btn btn-default">All Categories</a>
+	</div>
+	<div class="form-group">
+		<a href="{% if course.action and enrolledId == course.id %}/course/{{ course.id }}{% else %}/category/{{ course.category.id }}{% endif %}" class="btn btn-default">Back</a>
+	</div>
+</div>
+{% endblock %}

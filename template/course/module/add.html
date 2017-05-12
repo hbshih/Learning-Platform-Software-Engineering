@@ -1,0 +1,66 @@
+{% extends "top.html" %}
+
+{% block title %}New Module{% endblock %}
+
+{% block content %}
+<div id="submitModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Module Created</h4>
+			</div>
+			<div class="modal-body">
+				<p>Add New Component?</p>
+			</div>
+			<div class="modal-footer">
+				<a id="no" class="btn btn-primary">No</a>
+				<a id="yes" class="btn btn-success">Yes</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12">
+	<form id="newModuleForm">{% csrf_token %}
+		<div class="container form-box">
+			<div class="form-group sub-title">
+				<label>Name of the module:</label>
+				<input class="form-control" name="name">
+			</div>
+			<div class="form-group text-right">
+				<a href="/course/{{ course.id }}" class="btn btn-danger">Cancel</a>
+				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#submitModal">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+var triggerSwitch = 0;
+$("#submitModal").on('show.bs.modal', function (e) {
+	var modal = $(this);
+	triggerSwitch = (triggerSwitch + 1) % 2;
+	if (triggerSwitch == 0) {
+		return;
+	}
+	e.preventDefault();
+	$.ajax({
+		method: 'post',
+		url: '/course/{{ course.id }}/module/add',
+		data: $('#newModuleForm').serialize(),
+		success: function(rs) {
+			rs = parseInt(rs);
+			if (rs > 0) {
+				$('#no').attr('href', '/course/{{ course.id }}/module/' + rs);
+				$('#yes').attr('href', '/course/{{ course.id }}/module/' + rs + '/component/add');
+				modal.modal('show');
+			} else {
+				triggerSwitch = (triggerSwitch + 1) % 2;
+			}
+		},
+		error: function() {
+			triggerSwitch = (triggerSwitch + 1) % 2;
+		}
+	});
+});
+</script>
+{% endblock %}

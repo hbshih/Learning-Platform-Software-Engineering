@@ -1,0 +1,21 @@
+{% extends "top.html" %}
+
+{% block content %}
+<div class="left-bar col-xs-12 col-sm-4 col-md-3">
+	<div class="wrapper">
+		<h3>Enrolled Course</h3>
+		{% for course in enrolled_courses %}
+		<a href="/course/{{ course.course.id }}" class="btn btn-link full-width-button">
+			<div>
+				{{ forloop.counter }}. {{ course.course.name }} ... {% if course.completed %}Completed{% else %}{{ course.progress }}%{% endif %}
+			</div>
+		</a>
+		{% endfor %}
+	</div>
+</div>
+<div class="main col-xs-12 col-sm-8 col-md-9">
+	<div class="wrapper">
+		{% block main %}{% endblock %}
+	</div>
+</div>
+{% endblock %}

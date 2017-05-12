@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div style="margin:50px auto">
+	<div class="col-md-3">
+		<div class="form-horizontal">
+			<div class="form-group">
+				<label class="control-label col-md-3">X:</label>
+				<div class="col-md-9">
+					<input type="text" name="translateX" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">Y:</label>
+				<div class="col-md-9">
+					<input type="text" name="translateY" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-3 col-md-9" style="text-align:right">
+					<button type="button" class="btn btn-info" name="translate">Translate</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">X:</label>
+				<div class="col-md-9">
+					<input type="text" name="scaleX" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">Y:</label>
+				<div class="col-md-9">
+					<input type="text" name="scaleY" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-3 col-md-9" style="text-align:right">
+					<button type="button" class="btn btn-info" name="scale">Scale</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">Degree:</label>
+				<div class="col-md-9">
+					<input type="text" name="degree" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-3 col-md-9" style="text-align:right">
+					<button type="button" class="btn btn-info" name="rotate">Rotate</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-3">Polygon:</label>
+				<div class="col-md-9">
+					<input type="text" name="polygon" class="form-control">
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-3 col-md-9" style="text-align:right">
+					<button type="button" class="btn btn-info" name="new">New Polygon</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-3 col-md-9" style="text-align:right">
+					<button type="button" class="btn btn-info" name="reset">Reset</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-9">
+		<canvas style="border:1px solid black;"></canvas>
+	</div>
+</div>
+
+<script>
+var Polygon = function(width, height, center, coordinates, ctx) {
+	this.width = width;
+	this.height = height;
+	this.center = center;
+	this.orgCenter = {};
+	this.orgCenter.x = this.center.x;
+	this.orgCenter.y = this.center.y;
+	this.coordinates = coordinates;
+	this.orgCoordinates = [];
+	for (var i = 0; i < coordinates.length; i++) {
+		this.orgCoordinates[i] = {};
+		this.orgCoordinates[i].x = coordinates[i].x;
+		this.orgCoordinates[i].y = coordinates[i].y;
+	}
+	this.ctx = ctx;
+	this.draw();
+};
+
+Polygon.prototype.toString = function() {
+	return JSON.stringify(this.coordinates);
+};
+
+Polygon.prototype.draw = function() {
+	var ctx = this.ctx;
+	ctx.beginPath();
+	init();
+	ctx.fillStyle = '#5bc0de';
+	var l = this.coordinates.length;
+	ctx.moveTo((this.width/2 + this.coordinates[0].x), (this.height/2 + this.coordinates[0].y));
+	for (var i = 1; i < l; i++) {
+		ctx.lineTo((this.width/2 + this.coordinates[i].x), (this.height/2 + this.coordinates[i].y));
+	}
+	ctx.closePath();
+	ctx.fill();
+	
+	function init() {
+		ctx.clearRect(0,0,canvas.width,canvas.height);
+		ctx.moveTo(canvas.width/2,0);
+		ctx.lineTo(canvas.width/2,canvas.height);
+		ctx.stroke();
+		ctx.moveTo(0,canvas.height/2);
+		ctx.lineTo(canvas.width,canvas.height/2);
+		ctx.stroke();
+	}
+}
+
+Polygon.prototype.translate = function(x, y, callback, time) {
+	this.center.x -= x;
+	this.center.y -= y;
+	if (typeof time === 'undefined' || time === null)
+		time = 2000;
+	var l = this.coordinates.length;
+	var o = [], n = [];
+	for (var i = 0; i < l; i++) {
+		o[i] = {};
+		o[i].x = this.coordinates[i].x;
+		o[i].y = this.coordinates[i].y;
+		n[i] = {};
+		n[i].x = this.coordinates[i].x + x;
+		n[i].y = this.coordinates[i].y - y;
+	}
+	this.animate(o, n, callback, time);
+}
+
+Polygon.prototype.rotate = function(angle, callback, time) {
+	var orgCenter = {};
+	orgCenter.x = 0 - this.center.x;
+	orgCenter.y = this.center.y;
+	angle = 0 - angle;
+	angle = toRadians(angle);
+	if (typeof time === 'undefined' || time === null)
+		time = 2000;
+	var l = this.coordinates.length;
+	var o = [];
+	for (var i = 0; i < l; i++) {
+		o[i] = {};
+		o[i].x = this.coordinates[i].x;
+		o[i].y = this.coordinates[i].y;
+	}
+	var stepTime = 25;
+	var stepAngle = angle / (time / stepTime);
+	var start = 0;
+	var timer = setInterval(function() {
+		if (start < time) {
+			for (var i = 0; i < this.coordinates.length; i++) {
+				var x = this.coordinates[i].x;
+				var y = this.coordinates[i].y;
+				this.coordinates[i].x = ((x - orgCenter.x) * Math.cos(stepAngle) - (y - orgCenter.y) * Math.sin(stepAngle)) + orgCenter.x;
+				this.coordinates[i].y = ((x - orgCenter.x) * Math.sin(stepAngle) + (y - orgCenter.y) * Math.cos(stepAngle)) + orgCenter.y;
+			}
+			this.draw(ctx);
+			start += stepTime;
+		} else {
+			clearInterval(timer);
+		}
+	}.bind(this), stepTime);
+	
+	function toRadians(a) {
+		return a * (Math.PI / 180);
+	}
+}
+
+Polygon.prototype.scale = function(s, t, callback, time) {
+	var orgCenter = {};
+	orgCenter.x = 0 - this.center.x;
+	orgCenter.y = 0 - this.center.y;
+	this.translate(this.center.x - this.orgCenter.x, this.center.y - this.orgCenter.y, function() {
+		if (typeof time === 'undefined' || time === null)
+			time = 2000;
+		var l = this.coordinates.length;
+		var o = [], n = [];
+		for (var i = 0; i < l; i++) {
+			o[i] = {};
+			o[i].x = this.coordinates[i].x;
+			o[i].y = this.coordinates[i].y;
+			n[i] = {};
+			n[i].x = s * o[i].x;
+			n[i].y = t * o[i].y;
+		}
+		this.animate(o, n, function() {
+			this.translate(orgCenter.x, orgCenter.y, callback, 500);	
+		}.bind(this), time);
+	}.bind(this), 500);
+}
+
+Polygon.prototype.animate = function(o, n, callback, time) {
+	var stepTime = 25;
+	var step = [];
+	for (var i = 0; i < o.length; i++) {
+		step[i] = {};
+		step[i] = {
+			x: (n[i].x - o[i].x) / (time / stepTime),
+			y: (n[i].y - o[i].y) / (time / stepTime)
+		};
+	}
+	var start = 0;
+	var timer = setInterval(function() {
+		if (start < time) {
+			for (var i = 0; i < step.length; i++) {
+				this.coordinates[i].x += step[i].x;
+				this.coordinates[i].y += step[i].y;
+			}
+			this.draw(ctx);
+			start += stepTime;
+		} else {
+			clearInterval(timer);
+			if (typeof callback === 'function')
+				callback();
+		}
+	}.bind(this), stepTime);
+}
+
+Polygon.prototype.reset = function() {
+	this.center.x = this.orgCenter.x;
+	this.center.y = this.orgCenter.y;
+	for (var i = 0; i < this.coordinates.length; i++) {
+		this.coordinates[i].x = this.orgCoordinates[i].x;
+		this.coordinates[i].y = this.orgCoordinates[i].y;
+	}
+	this.draw();
+}
+
+var canvas = document.getElementsByTagName('canvas')[0];
+var ctx = canvas.getContext('2d');
+canvas.width = 500;
+canvas.height = 500;
+var rect = {
+	x: 0,
+	y: 0,
+	w: 50,
+	h: 50
+};
+var polygon = new Polygon(
+	canvas.width,
+	canvas.height,
+	{x:rect.x, y:rect.y},
+	[{x: rect.x - rect.w/2, y: rect.y - rect.h/2}, {x: rect.x - rect.w/2, y: rect.y + rect.h/2}, {x: rect.x + rect.w/2, y: rect.y + rect.h/2}, {x: rect.x + rect.w/2, y: rect.y - rect.h/2}],
+	ctx
+);
+
+$('div.form-group').on('click', 'button[name="translate"]', function() {
+	var x = parseFloat(eval($('input[name="translateX"]').val()));
+	var y = parseFloat(eval($('input[name="translateY"]').val()));
+	if (!isNaN(x) && !isNaN(y)) {
+		polygon.translate(x, y);
+	} else {
+		alert("You need to enter valid number.");
+	}
+});
+$('div.form-group').on('click', 'button[name="scale"]', function() {
+	var x = parseFloat(eval($('input[name="scaleX"]').val()));
+	var y = parseFloat(eval($('input[name="scaleY"]').val()));
+	if (!isNaN(x) && !isNaN(y)) {
+		polygon.scale(x, y);
+	} else {
+		alert("You need to enter valid number.");
+	}
+});
+$('div.form-group').on('click', 'button[name="rotate"]', function() {
+	var degree = parseFloat(eval($('input[name="degree"]').val()));
+	if (!isNaN(degree)) {
+		polygon.rotate(degree);
+	} else {
+		alert("You need to enter valid number.");
+	}
+});
+$('div.form-group').on('click', 'button[name="reset"]', function() {
+	polygon.reset();
+});
+$('div.form-group').on('click', 'button[name="new"]', function() {
+	var newPolygon = JSON.parse($('input[name="polygon"]').val());
+	polygon = new Polygon(
+		canvas.width,
+		canvas.height,
+		{x:0, y:0},
+		newPolygon,
+		ctx
+	);
+});
+</script>
+</body>
+</html>

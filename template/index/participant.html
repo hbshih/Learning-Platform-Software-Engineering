@@ -1,0 +1,18 @@
+{% extends "enrolled-course.html" %}
+
+{% block title %}Home{% endblock%}
+
+{% block main %}
+<div class="col-xs-9 main-categories">
+	{% for category in categories %}
+	<div class="form-group">
+		<a href="/category/{{ category.id }}" class="btn btn-default full-width">{{ category.name }}</a>
+	</div>
+	{% endfor %}
+</div>
+<div class="col-xs-3 text-right">
+	<div class="form-group">
+		<a href="/" class="btn btn-default">All Categories</a>
+	</div>
+</div>
+{% endblock %}

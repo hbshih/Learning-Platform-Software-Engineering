@@ -1,0 +1,32 @@
+{% extends "top.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="col-xs-12">
+	<div class="col-xs-12 text-right" style="margin:15px 0px;">
+		{% if categoriesLength == 0 %}
+		No Category is Available
+		{% else %}
+		<a href="/course/add" class="btn btn-primary">Create New Course</a>
+		{% endif %}
+	</div>
+	<div class="col-xs-12 table-list-instructor">
+		{% for course in courses %}
+		<div class="row form-group">
+			<div class="col-xs-12 col-sm-8 col-md-10 col-lg-11 content-container">
+				<div class="col-xs-12 col-sm-6 col-md-5 col-lg-4">
+					Course: {{ course.name }}
+				</div>
+				<div class="col-xs-12 col-sm-6 col-md-7 col-lg-8">
+					Category: {{ course.category.name }}
+				</div>
+			</div>
+			<div class="col-xs-12 col-sm-4 col-md-2 col-lg-1 text-right">
+				<a href="/course/{{ course.id }}" class="btn btn-default">Manage</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+{% endblock %}

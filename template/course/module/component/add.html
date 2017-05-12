@@ -1,0 +1,31 @@
+{% extends "top.html" %}
+
+{% block title %}New Component{% endblock %}
+
+{% block content %}
+<div class="col-xs-12">
+	<form id="newComponentForm" method="post">{% csrf_token %}
+		<div class="container form-box">
+			<div class="form-group sub-title">
+				<label>Name of the component:</label>
+				<input class="form-control" name="name">
+			</div>
+			<div class="form-group">
+				<label>Which type?</label>
+				{% for type in types %}
+				<div class="radio">
+					<label>
+						<input type="radio" class="form-check-input" name="type" value="{{ type.id }}"{% if forloop.first %} checked{% endif %}>
+						{{ type.name }}
+					</label>
+				</div>
+				{% endfor %}
+			</div>
+			<div class="form-group text-right">
+				<a href="/course/{{ course.id }}/module/{{ module.id }}" class="btn btn-danger">Cancel</a>
+				<button type="sumbit" class="btn btn-success">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "./component.html" %}
+
+{% block title %}Manage Text{% endblock %}
+
+{% block componentContent %}
+<div class="form-group">
+	<label>Text:</label>
+	<textarea rows="6" class="form-control" name="contents">{{ text.contents }}</textarea>
+</div>
+{% endblock %}

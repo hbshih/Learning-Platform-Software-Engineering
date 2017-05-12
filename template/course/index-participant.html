@@ -1,0 +1,61 @@
+{% extends "enrolled-course.html" %}
+
+{% block title %}Module List{% endblock %}
+
+{% block main %}
+<div class="col-xs-8 col-md-9">
+	<div class="form-group">
+		<label>Course Name:</label>
+		{{ course.name }}
+	</div>
+	<div class="form-group">
+		<label>Instructor:</label>
+		{{ course.instructor.name }}
+	</div>
+	<div class="table-list">
+		<div class="content">
+			{% for module in modules %}
+			<div class="module-list{% if forloop.first %} first{% endif %}">
+				<h3><small>{{ module.name }}</small><small style="float:right"><i class="fa fa-caret-down"></i></small></h3>
+			</div>
+			<div class="component no-padding"{% if not module.can_view %} style="display:none"{% endif %}>
+				{% if not module.can_view %}
+				<div>You need to view the Module before to unlock this Module</div>
+				{% else %}
+				{% if module.components.count == 0 %}
+				<div>No Components Available for this Module</div>
+				{% else %}
+				{% for component in module.components %}
+				{% with isAlt=forloop.counter|divisibleby:"2" %}
+				<a href="./{{ course.id }}/module/{{ module.id }}/component/{{ component.id }}">
+					<div{% if isAlt %} class="bg-alt"{% endif %}>{{ component.name }}</div>
+				</a>
+				{% endwith %}
+				{% endfor %}
+				{% endif %}
+				{% endif %}
+			</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<div class="col-xs-4 col-md-3 text-right">
+	<div class="form-group">
+		<a href="/" class="btn btn-default">All Categories</a>
+	</div>
+	<div class="form-group">
+		<a href="./{{ course.id }}/overview" class ="btn btn-default">Overview</a>
+	</div>
+	<div class="form-group">
+		{% if action == "drop" %}
+		<a href="./{{ course.id }}/drop" class ="btn btn-default">Drop</a>
+		{% elif action == "retake" %}
+		<a href="./{{ course.id }}/enroll" class="btn btn-default">Retake</a>
+		{% endif %}
+	</div>
+	<div class="form-group">
+		<a href="/category/{{ course.category.id }}" class="btn btn-default">Back</a>
+	</div>
+</div>
+<script src="/static/js/enrolled-course.js"></script>
+{% endblock %}

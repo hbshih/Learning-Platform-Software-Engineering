@@ -1,0 +1,60 @@
+{% extends "./component.html" %}
+
+{% block title %}Manage Text{% endblock %}
+
+{% block componentContent %}
+<div class="form-group">
+	<label>Quiz:</label>
+</div>
+{% if quizes.count == 0 %}
+<div class="form-group" data-index="0">
+	<label>Q.1</label>
+	<div class="row form-group">
+		<div class="col-xs-12 col-sm-2">
+			Question:
+		</div>
+		<div class="col-xs-12 col-sm-10">
+			<input class="form-control" name="question">
+		</div>
+	</div>
+	<div class="row form-group">
+		<div class="col-xs-12 col-sm-2">
+			Answer:
+		</div>
+		<div class="col-xs-12 col-sm-10">
+			<input class="form-control" name="answer">
+		</div>
+	</div>
+</div>
+{% endif %}
+{% for quiz in quizes %}
+<div class="form-group" data-index="{{ forloop.counter0 }}">
+	<label>Q.{{ forloop.counter }}</label>
+	<div class="row form-group">
+		<div class="col-xs-12 col-sm-2">
+			Question:
+		</div>
+		<div class="col-xs-12 col-sm-10">
+			<input class="form-control" name="question" value="{{ quiz.question }}">
+		</div>
+	</div>
+	<div class="row form-group">
+		<div class="col-xs-12 col-sm-2">
+			Answer:
+		</div>
+		<div class="col-xs-12 col-sm-10">
+			<input class="form-control" name="answer" value="{{ quiz.answer }}">
+		</div>
+	</div>
+</div>
+{% endfor %}
+<div class="form-group text-right">
+	<button type="button" class="btn btn-danger" id="remove"{% if quizes.count <= 1 %} style="display:none;"{% endif %}>
+		<i class="fa fa-minus"></i>
+	</button>
+	<button type="button" class="btn btn-success" id="add" style="margin-left:10px;">
+		<i class="fa fa-plus"></i>
+	</button>
+</div>
+<script src="/static/js/quiz.js"></script>
+{% endblock %}

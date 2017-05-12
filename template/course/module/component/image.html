@@ -1,0 +1,27 @@
+{% extends "./component.html" %}
+
+{% block title %}Manage Image{% endblock %}
+
+{% block componentContent %}
+{% if image.contents %}
+<div class="form-group">
+	<label>Current Image:</label>
+	<div class="row">
+		<img class="col-xs-6" src="{{ image.url }}" />
+	</div>
+</div>
+{% endif %}
+<div class="form-group">
+	<label>Image:</label>
+	<input name="image" type="file" accept="image/*" class="file-loading">
+</div>
+<script>
+	$('input[name="image"]').fileinput({
+		previewFileType: 'image',
+		browseClass: 'btn btn-primary',
+		browseLabel: 'Browse',
+		browseIcon: '<i class="fa fa-folder-o"></i>',
+		showUpload: false
+	})
+</script>
+{% endblock %}

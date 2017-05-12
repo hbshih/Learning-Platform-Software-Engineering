@@ -1,0 +1,24 @@
+{% extends "top.html" %}
+
+{% block content %}
+<div class="col-xs-12">
+	<form method="post"{% if image or file %} enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+		<div class="container form-box">
+			<div class="form-group sub-title">
+				<label>Course:</label>&nbsp;{{ course.name }}
+			</div>
+			<div class="form-group">
+				<label>Module:</label>&nbsp;{{ module.name }}
+			</div>
+			<div class="form-group">
+				<label>Component:</label>&nbsp;{{ component.name }}
+			</div>
+			{% block componentContent %}{% endblock %}
+			<div class="form-group text-right">
+				<a href="/course/{{ course.id }}/module/{{ module.id }}" class="btn btn-danger">Cancel</a>
+				<input type="submit" class="btn btn-success" value="Submit">
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

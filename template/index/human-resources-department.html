@@ -1,0 +1,60 @@
+{% extends "top.html" %}
+
+{% block title %}View Users Completed Courses List{% endblock %}
+
+{% block content %}
+<div class="main col-xs-12">
+	<div class="wrapper">
+		<div class="form-group col-xs-12 text-right">
+			<a href="./" class="btn btn-primary" style="float:left;">Show All</a>
+			<form action="./" method="get" class="form-inline">
+				<label>Search:</label>
+				<input class="form-control" name="search">
+				<input type="submit" class="btn btn-primary" value="Search">
+			</form>
+		</div>
+		<div class="col-xs-12 table-list no-padding">
+			<div class="content">
+				<div class="category-list first">
+					<h3><small>User List</small></h3>
+				</div>
+				{% if users|length == 0 %}
+				<div>No User Found</div>
+				{% endif %}
+				{% for user in users %}
+				{% with isAlt=forloop.counter|divisibleby:"2" %}
+				<a href="/user/completed_courses/{{ user.id }}">
+					<div{% if isAlt %} class="bg-alt"{% endif %}>
+						{{ forloop.counter }}. {{ user.username }} ({{ user.role.name }})
+					</div>
+				</a>
+				{% endwith %}
+				{% endfor %}
+				{% if users|length != 0 %}
+				<div class="pagination-parent last">
+					<ul id="pagination"></ul>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+$('#pagination').twbsPagination({
+	totalPages: {{ totalPages }},
+	visiblePages: 5,
+	{% if page <= totalPages %}startPage: {{ page }},{% endif %}
+	onPageClick: function(e, page) {
+		if (page == {{ page }}) {
+			return;
+		}
+		var url = window.location.href.split('?')[0];
+		if (page == 1) {
+			window.location = url;
+		} else {
+			window.location = url + "?page=" + page;
+		}
+	}
+});
+</script>
+{% endblock %}

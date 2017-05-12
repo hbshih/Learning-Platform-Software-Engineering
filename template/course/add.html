@@ -1,0 +1,83 @@
+{% extends "top.html" %}
+
+{% block title %}New Course{% endblock %}
+
+{% block content %}
+<div id="submitModal" class="modal fade" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Course Created</h4>
+			</div>
+			<div class="modal-body">
+				<p>Add New Modules?</p>
+			</div>
+			<div class="modal-footer">
+				<a id="no" class="btn btn-primary">No</a>
+				<a id="yes" class="btn btn-success">Yes</a>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12">
+	<form id="newCourseForm">{% csrf_token %}
+		<div class="container form-box">
+			<div class="form-group sub-title">
+				<label>Name of the course:</label>
+				<input class="form-control" name="name">
+			</div>
+			<div class="form-group">
+				<label>Which category?</label>
+				{% for category in categories %}
+				<div class="radio">
+					<label>
+						<input type="radio" class="form-check-input" name="category" value="{{ category.id }}"{% if forloop.first %} checked{% endif %}>
+						{{ category.name }}
+					</label>
+				</div>
+				{% endfor %}
+			</div>
+			<div class="form-group">
+				<label>
+					Description:
+				</label>
+				<textarea class="form-control" name="description" rows="5"></textarea>
+			</div>
+			<div class="form-group text-right">
+				<a href="/" class="btn btn-danger">Cancel</a>
+				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#submitModal">Submit</button>
+			</div>
+		</div>
+	</form>
+</div>
+<script>
+var triggerSwitch = 0;
+$("#submitModal").on('show.bs.modal', function (e) {
+	var modal = $(this);
+	triggerSwitch = (triggerSwitch + 1) % 2;
+	if (triggerSwitch == 0) {
+		return;
+	}
+	e.preventDefault();
+	$.ajax({
+		method: 'post',
+		url: '/course/add',
+		data: $('#newCourseForm').serialize(),
+		success: function(rs) {
+			rs = parseInt(rs);
+			if (rs > 0) {
+				$('#no').attr('href', '/course/' + rs);
+				$('#yes').attr('href', '/course/' + rs + '/module/add');
+				modal.modal('show');
+			} else {
+				triggerSwitch = (triggerSwitch + 1) % 2;
+			}
+		},
+		error: function() {
+			triggerSwitch = (triggerSwitch + 1) % 2;
+		}
+	});
+});
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "./view-component.html" %}
+
+{% block title %}View Quiz{% endblock %}
+
+{% block componentContent %}
+<form autocomplete="off">
+	<div class="form-group">
+		{% if quizes.count == 0 %}
+		No Questions Available
+		{% endif %}
+		{% for quiz in quizes %}
+		<div class="form-group">
+			<label>Q.{{ forloop.counter }} {{ quiz.question }}</label>
+			<input class="form-control" name="answer">
+		</div>
+		{% endfor %}
+		{% if quizes.count > 0 %}
+		<div class="form-group text-right">
+			<input type="submit" class="btn btn-info" value="Submit">
+		</div>
+		{% endif %}
+	</div>
+</form>
+<script src="/static/js/view-quiz.js"></script>
+{% endblock %}

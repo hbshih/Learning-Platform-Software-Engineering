@@ -1,0 +1,24 @@
+{% extends "./component.html" %}
+
+{% block title %}Manage Image{% endblock %}
+
+{% block componentContent %}
+{% if file.contents %}
+<div class="form-group">
+	<label>Current File:</label>
+	<a href="/download/{{ file.id }}">{{ file.name }}</a>
+</div>
+{% endif %}
+<div class="form-group">
+	<label>File:</label>
+	<input name="file" type="file" class="file-loading">
+</div>
+<script>
+	$('input[name="file"]').fileinput({
+		browseClass: 'btn btn-primary',
+		browseLabel: 'Browse',
+		browseIcon: '<i class="fa fa-folder-o"></i>',
+		showUpload: false
+	})
+</script>
+{% endblock %}

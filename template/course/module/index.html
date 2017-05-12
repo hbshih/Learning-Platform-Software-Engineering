@@ -1,0 +1,54 @@
+{% extends "top.html" %}
+
+{% block title %}Manage Course{% endblock %}
+
+{% block content %}
+<div class="main col-xs-12">
+	<div class="wrapper">
+		<div class="col-xs-9 table-list no-padding">
+			<div class="content">
+				<div class="course-list title first">
+					<h3><small>Module: {{ module.name }}</small></h3>
+				</div>
+				<ul id="sortable" class="sortable no-padding">
+					{% for component in components %}
+					<li class="bg-alt{% if forloop.last %} last{% endif %}" data-id="{{ component.id }}"><div class="drag-handle"><i class="fa fa-bars"></i></div><a href="/course/{{ course.id }}/module/{{ module.id }}/component/{{ component.id }}">{{ component.type.name }}: {{ component.name }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		<div class="col-xs-3 text-right">
+			<div class="form-group">
+				<a href="/course/{{ course.id }}/module/{{ module.id }}/component/add" class="btn btn-default">Add More Components</a>
+			</div>
+			<div class="form-group">
+				<button type="button" id="save-order" class="btn btn-default">Save Order of Components</button>
+			</div>
+			<div class="form-group">
+				<a href="/course/{{ course.id }}" class="btn btn-default">Back</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var sortable = document.getElementById('sortable');
+	Sortable.create(sortable, {
+		handle: '.drag-handle'
+	});
+
+	$('#save-order').on('click', function(e) {
+		var orderList = [];
+		$('#sortable li').each(function(e) {
+			orderList.push($(this).data('id'));
+		});
+		$.ajax({
+			method: 'post',
+			url: '/course/{{ course.id }}/module/{{ module.id }}/save_order',
+			data: 'order=' + JSON.stringify(orderList),
+			complete: function(rs) {
+				location.reload();
+			}
+		});
+	});
+</script>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "./view-component.html" %}
+
+{% block title %}View Text{% endblock %}
+
+{% block componentContent %}
+<div class="form-group">
+	{% load embed_video_tags %}
+	{% video youtube.video as my_video %}
+	{% video my_video %}
+	{% endvideo %}
+</div>
+{% endblock %}

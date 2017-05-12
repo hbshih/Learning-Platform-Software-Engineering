@@ -1,0 +1,57 @@
+{% extends "enrolled-course.html" %}
+
+{% block title %}Course List{% endblock %}
+
+{% block main %}
+<div class="col-xs-8 col-md-9 table-list no-padding">
+	<div class="text-center title">
+		<h3 class="title-text">{{ category.name }}</h3>
+	</div>
+	<div class="content">
+		<div class="course-list">
+			<h3><small>Course List</small></h3>
+		</div>
+		{% if courses|length == 0 %}
+		<div>No Course is Available</div>
+		{% endif %}
+		{% for course in courses %}
+		<a href="/course/{{ course.id }}{% if not course.enrolled %}/overview{% endif %}">
+			{% with isAlt=forloop.counter|divisibleby:"2" %}
+			<div{% if isAlt %} class="bg-alt"{% endif %}>{{ course.name }}</div>
+			{% endwith %}
+		</a>
+		{% endfor %}
+		{% if courses|length != 0 %}
+		<div class="pagination-parent last">
+			<ul id="pagination"></ul>
+		</div>
+		{% endif %}
+	</div>
+</div>
+<div class="col-xs-4 col-md-3 text-right">
+	<div class="form-group">
+		<a href="/" class="btn btn-default">All Categories</a>
+	</div>
+	<div class="form-group">
+		<a href="/" class="btn btn-default">Back</a>
+	</div>
+</div>
+<script>
+$('#pagination').twbsPagination({
+	totalPages: {{ totalPages }},
+	visiblePages: 5,
+	{% if page <= totalPages %}startPage: {{ page }},{% endif %}
+	onPageClick: function(e, page) {
+		if (page == {{ page }}) {
+			return;
+		}
+		var url = window.location.href.split('?')[0];
+		if (page == 1) {
+			window.location = url;
+		} else {
+			window.location = url + "?page=" + page;
+		}
+	}
+});
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock%}
+
+{% block content %}
+<div class="form-box col-xs-10 col-sm-6 col-md-4 col-xs-offset-1 col-sm-offset-3 col-md-offset-4">
+	<form action="./" method="post">{% csrf_token %}
+		<div class="form-group">
+			<label class="sub-title">Please Sign In</label>
+		</div>
+		{% if errorMessage %}
+		<div class="alert alert-danger">
+			<label>{{ errorMessage }}</label>
+		</div>
+		{% endif %}
+		<div class="form-group">
+			<input class="form-control" name="username" placeholder="Username">
+		</div>
+		<div class="form-group">
+			<input class="form-control" type="password" name="password" placeholder="Password">
+		</div>
+		<div class="form-group checkbox">
+			<label><input type="checkbox" name="as_participant">Log in as Participant</label>
+		</div>
+		<div class="form-group">
+			<a href="./register" class="btn btn-link no-padding" role="button">New User</a>
+		</div>
+		<div class="form-group">
+			<input type="submit" value="Login" class="btn btn-success full-width">
+		</div>
+	</form>
+</div>
+{% endblock %}
